@@ -32,13 +32,13 @@ export default function Sidebar() {
         </Link>
 
         <div className="nav-section">Attendance</div>
-        <Link to="/attendance-mark" className="nav-item">
+        <Link to="/reports/attendance" className="nav-item">
           <span className="nav-icon">✅</span>
           Mark Attendance
         </Link>
 
         <div className="nav-section">Reports</div>
-        <Link to="/reports-absences" className="nav-item">
+        <Link to="/recent-absences" className="nav-item">
           <span className="nav-icon">📋</span>
           Absences
         </Link>
