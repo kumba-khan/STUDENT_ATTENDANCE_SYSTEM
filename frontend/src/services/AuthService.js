@@ -1,0 +1,36 @@
+const API_URL =
+  "http://localhost:5000/api/auth";
+
+export const login = async (email, password) => {
+  const response = await fetch(
+    `${API_URL}/login`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    }
+  );
+
+  return response.json();
+};
+
+export const logout = () => {
+  localStorage.removeItem("token");
+};
+
+export const getToken = () => {
+  return localStorage.getItem("token");
+};
+
+export const authHeader = () => ({
+  Authorization:
+    `Bearer ${localStorage.getItem(
+      "token"
+    )}`,
+});

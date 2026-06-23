@@ -1,4 +1,4 @@
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import { Link, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
@@ -19,6 +19,8 @@ import AttendanceHistory from './pages/Attendance/AttendanceHistory';
 import Login from './pages/Auth/Login';
 import StudentReport from './pages/Report/StudentReport';
 import CourseReport from './pages/Report/CourseReport';
+import { logout } from './services/AuthService';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function getPageTitle(pathname) {
   const titleMap = [
@@ -45,6 +47,7 @@ function getPageTitle(pathname) {
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Pages that should not use the dashboard layout
   const authPages = ["/auth/login"];
@@ -57,6 +60,11 @@ function App() {
     );
   }
 
+  const handleLogout = () => {
+    logout();
+    navigate("/auth/login");
+  };
+
   return (
     <>
       <div className="app-container">
@@ -68,30 +76,30 @@ function App() {
             </div>
             <div className="header-right">
               <span className="user-name">kumba@university.edu</span>
-              <Link to="/auth/logout" className="btn btn-outline btn-sm">Logout</Link>
+              <button onClick={()=>{handleLogout()}} className="btn btn-outline btn-sm">Logout</button>
             </div>
-        </header>
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/students" element={<StudentsList />} />
-            <Route path="/students/create" element={<AddStudent />} />
-            <Route path="/courses" element={<AllCourses />} />
-            <Route path="/attendance-mark/:id" element={<MarkAttendance />} />
-            <Route path="/recent-absences" element={<RecentAbsences />} />
-            <Route path="/courses/create" element={<AddCourse />} />
-            <Route path="/students/:id" element={<ViewStudent />} />
-            <Route path="/students/:id/edit" element={<EditStudent />} />
-            <Route path="/courses/:id" element={<ViewCourse />} />
-            <Route path="/courses/:id/edit" element={<EditCourse />} />
-            <Route path="/courses/:id/enroll" element={<EnrollStudents />} />
-            <Route path="/reports/attendance" element={<Attendance />} />
-            <Route path="/attendance-history/:id" element={<AttendanceHistory />} />
-            <Route path="/reports/student/:id" element={<StudentReport />} />
-            <Route path="/reports/course/:id" element={<CourseReport />} />
-            <Route path="*" element={<h1>404 - Page Not Found</h1>} />
-          </Routes>
-        </div>
+          </header>
+          <div className="content">
+            <Routes>
+              <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/students" element={<ProtectedRoute><StudentsList /></ProtectedRoute>} />
+              <Route path="/students/create" element={<ProtectedRoute><AddStudent /></ProtectedRoute>} />
+              <Route path="/courses" element={<ProtectedRoute><AllCourses /></ProtectedRoute>} />
+              <Route path="/attendance-mark/:id" element={<ProtectedRoute><MarkAttendance /></ProtectedRoute>} />
+              <Route path="/recent-absences" element={<ProtectedRoute><RecentAbsences /></ProtectedRoute>} />
+              <Route path="/courses/create" element={<ProtectedRoute><AddCourse /></ProtectedRoute>} />
+              <Route path="/students/:id" element={<ProtectedRoute><ViewStudent /></ProtectedRoute>} />
+              <Route path="/students/:id/edit" element={<ProtectedRoute><EditStudent /></ProtectedRoute>} />
+              <Route path="/courses/:id" element={<ProtectedRoute><ViewCourse /></ProtectedRoute>} />
+              <Route path="/courses/:id/edit" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
+              <Route path="/courses/:id/enroll" element={<ProtectedRoute><EnrollStudents /></ProtectedRoute>} />
+              <Route path="/reports/attendance" element={<ProtectedRoute><Attendance /></ProtectedRoute>} />
+              <Route path="/attendance-history/:id" element={<ProtectedRoute><AttendanceHistory /></ProtectedRoute>} />
+              <Route path="/reports/student/:id" element={<ProtectedRoute><StudentReport /></ProtectedRoute>} />
+              <Route path="/reports/course/:id" element={<ProtectedRoute><CourseReport /></ProtectedRoute>} />
+              <Route path="*" element={<ProtectedRoute><h1>404 - Page Not Found</h1></ProtectedRoute>} />
+            </Routes>
+          </div>
 
         </main>
       </div>
