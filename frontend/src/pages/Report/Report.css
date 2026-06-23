@@ -1,0 +1,35 @@
+.report-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.report-stat {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-body);
+    border-radius: var(--border-radius);
+}
+
+.report-stat .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.report-stat .stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.r-success{
+    color: var(--color-success);
+}
+
+.r-danger{
+    color: var(--color-danger)
+}
+
+.r-warning{
+    color: var(--color-warning);
+}
