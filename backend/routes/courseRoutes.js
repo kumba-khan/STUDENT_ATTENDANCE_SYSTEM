@@ -7,12 +7,14 @@ import {
     updateCourse,
     deleteCourse,
     enrollStudent,
-    removeStudent
+    removeStudent,
+    getCourseStats
 } from "../controllers/courseController.js";
 
 const router = express.Router();
 
 router.get("/", getAllCourses);
+router.get("/stats", getCourseStats);
 router.post("/", createCourse);
 router.post("/:id/enroll", enrollStudent);
 router.delete("/:id/:studentId", removeStudent);

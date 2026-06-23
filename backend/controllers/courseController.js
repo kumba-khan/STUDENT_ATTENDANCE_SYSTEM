@@ -151,3 +151,15 @@ export const removeStudent = async (req, res) => {
         return res.status(500).json({message: "Error removing student", error: error.message});
     }
 };
+
+export const getCourseStats = async (req, res) => {
+    try {
+        const courses = await Course.find();
+        const total = courses.length;
+
+        res.status(200).json({total});
+    }
+    catch (error) {
+        res.status(500).json({message: "error getting courses", error: error.message})
+    }
+};
