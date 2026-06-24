@@ -1,14 +1,59 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { deleteCourse, getCourses } from "../../services/CourseService";
 
 export default function AllCourses() {
-  const courses = [
-    { _id: 1, name: "Introduction to Programming", schedule: "Mon, Wed, Fri 9:00 AM - 11:00 AM", startDate: "2025-01-15", endDate: "2025-04-15", students: [] },
-    { _id: 2, name: "Data Structures", schedule: "Tue, Thu 2:00 PM - 4:00 PM", startDate: "2025-01-15", endDate: "2025-04-15", students: [] },
-    { _id: 3, name: "Web Development", schedule: "Mon, Wed 1:00 PM - 3:00 PM", startDate: "2025-01-15", endDate: "2025-04-15", students: [] },
-    { _id: 4, name: "Database Systems", schedule: "Tue, Thu 10:00 AM - 12:00 PM", startDate: "2025-01-15", endDate: "2025-04-15", students: [] },
-    { _id: 5, name: "Operating Systems", schedule: "Mon, Wed 3:00 PM - 5:00 PM", startDate: "2025-01-15", endDate: "2025-04-15", students: [] },
-    { _id: 6, name: "Software Engineering", schedule: "Tue, Thu 1:00 PM - 3:00 PM", startDate: "2025-01-15", endDate: "2025-04-15", students: [] }
-  ];
+  const [courses, setCourses] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const data = await getCourses();
+        setCourses(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchCourses()
+  }, [])
+
+  const handleDelete = async (courseId) => {
+    setLoading(true);
+
+    try {
+      await deleteCourse(courseId);
+
+      const deleted = courses.find(
+        (course) => course._id === courseId
+      );
+
+      if (deleted) {
+        setCourses((prev) => prev.filter(
+          (course) => course._id !== courseId
+        ));
+      }
+
+      setSuccess("course deleted successfully");
+      setTimeout(() => {
+        setSuccess("");
+      }, 3000);
+    } catch (error) {
+      console.error(error);
+
+      setError("Something went wrong");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="card">
       <div className="card-header">
@@ -29,7 +74,7 @@ export default function AllCourses() {
             </tr>
           </thead>
           <tbody>
-            {courses.map((course) => (
+            {courses?.map((course) => (
               <tr key={course._id}>
                 <td>{course.name}</td>
                 <td>{course.schedule}</td>
@@ -63,13 +108,6 @@ export default function AllCourses() {
                     Enroll Students
                   </Link>
 
-                  <Link
-                    to={`/attendance-mark/${course._id}`}
-                    className="btn btn-sm btn-outline"
-                  >
-                    Mark Attendance
-                  </Link>
-
                   <button
                     className="btn btn-sm btn-danger"
                     onClick={() => {
@@ -82,13 +120,27 @@ export default function AllCourses() {
                       }
                     }}
                   >
-                    Delete
+                    {loading? "loading...": "Delete"}
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="fixed-notification">
+        {error && (
+          <div className="alert alert-danger">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="alert alert-success">
+            {success}
+          </div>
+        )}
       </div>
     </div>
   )

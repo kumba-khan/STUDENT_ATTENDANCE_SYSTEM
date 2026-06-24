@@ -1,6 +1,5 @@
-import {jwtDecode} from "jwt-decode";
-const API_URL =
-  "http://localhost:5000/api/auth";
+import { jwtDecode } from "jwt-decode";
+const API_URL = "http://localhost:5000/api/auth";
 
 export const login = async (email, password) => {
   const response = await fetch(
@@ -39,11 +38,11 @@ export const authHeader = () => ({
 });
 
 export const user = () => {
-    const token = getToken();
+  const token = getToken();
 
-    if (!token) {
-        return null;
-    }
+  if (!token) {
+    return null;
+  }
 
-    return jwtDecode(token);
+  return jwtDecode(token);
 }

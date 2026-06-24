@@ -1,59 +1,123 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { getCourseById, updateCourse } from "../../services/CourseService";
 
 export default function EditCourse() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-    const course = {
-        _id: "alshd947tiwer",
-        name: 'Introduction to Computer Science',
-        description: 'An introductory course on computer science concepts and programming.',
-        startDate: '2023-09-01',
-        endDate: '2023-12-15',
-        schedule: 'Mon/Wed/Fri 10:00 AM - 11:30 AM'
-    };
-    return (
-        <div className="card">
-          <div className="card-header">
-            <h2>Edit Course: {course.name}</h2>
-            <button onClick={() => navigate(-1)} className="btn btn-outline">
-              Back
-            </button>
-          </div>
+  const [course, setCourse] = useState({});
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
+  const [schedule, setSchedule] = useState("")
 
-          <form action="/courses/{{course._id}}?_method=PUT" method="POST">
-            <div className="form-group">
-              <label htmlFor="name">Course Name *</label>
-              <input type="text" id="name" name="name" required value={course.name}/>
-            </div>
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <textarea id="description" name="description" rows="3">{course.description}</textarea>
-            </div>
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const data = await getCourseById(id);
+        setCourse(data);
+        setName(data?.name);
+        setDescription(data?.description);
+        setEndDate(data?.endDate);
+        setStartDate(data?.startDate);
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="startDate">Start Date *</label>
-                <input type="date" id="startDate" name="startDate" required value={course.startDate}/>
-              </div>
-              <div className="form-group">
-                <label htmlFor="endDate">End Date *</label>
-                <input type="date" id="endDate" name="endDate" required value={course.endDate}/>
-              </div>
-            </div>
+    fetchCourse();
+  }, [id])
 
-            <div className="form-group">
-              <label htmlFor="schedule">Schedule *</label>
-              <input type="text" id="schedule" name="schedule" required value={course.schedule}/>
-            </div>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-            <div className="form-group">
-              <button type="submit" className="btn btn-primary">Update Course</button>
-              <button type="button" onClick={() => navigate(-1)} className="btn btn-outline">
-                Cancel
-              </button>
-            </div>
-          </form>
+    try {
+      const result = await updateCourse(id, { name, description, startDate: new Date(startDate), endDate: new Date(endDate), schedule });
+      setSuccess("Course updated successfully");
+      setTimeout(() => {
+        setSuccess("");
+        navigate(-1);
+      }, 3000);
+    } catch (error) {
+      console.error(error);
+
+      setError("Something went wrong");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="card">
+      <div className="card-header">
+        <h2>Edit Course: {course.name}</h2>
+        <button onClick={() => navigate(-1)} className="btn btn-outline">
+          Back
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="name">Course Name *</label>
+          <input type="text" id="name" name="name" required onChange={(e) => setName(e.target.value)} defaultValue={course.name} />
         </div>
-    )
+
+        <div className="form-group">
+          <label htmlFor="description">Description</label>
+          <textarea id="description" name="description" rows="3" onChange={(e) => setDescription(e.target.value)} defaultValue={course.description}>
+          </textarea>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="startDate">Start Date *</label>
+            <input type="date" id="startDate" name="startDate" onChange={(e) => setStartDate(e.target.value)} required defaultValue={course.startDate?.split("T")[0]} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="endDate">End Date *</label>
+            <input type="date" id="endDate" name="endDate" onChange={(e) => setEndDate(e.target.value)} required defaultValue={course.endDate?.split("T")[0]} />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="schedule">Schedule *</label>
+          <input type="text" id="schedule" name="schedule" onChange={(e) => setSchedule(e.target.value)} required defaultValue={course.schedule} />
+        </div>
+
+
+        <div className="form-group">
+          <button type="submit" disabled={loading} className="btn btn-primary">
+            {loading ? "loading" : "Update Course"}
+          </button>
+          <button type="button" disabled={loading} onClick={() => navigate(-1)} className="btn btn-outline">
+            Cancel
+          </button>
+        </div>
+      </form>
+
+      <div className="fixed-notification">
+          {error && (
+            <div className="alert alert-danger">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="alert alert-success">
+              {success}
+            </div>
+          )}
+        </div>
+    </div>
+  )
 }

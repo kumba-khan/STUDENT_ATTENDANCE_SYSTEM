@@ -1,21 +1,33 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { getStudentById } from "../../services/StudentService";
 
 export default function ViewStudent() {
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  const student = {
-    _id: 1,
-    name: 'Amadou Jallow',
-    email: 'amadou.jallow@university.edu',
-    status: 'active',
-    phone: '123-456-7890'
-  };
+  const [student, setStudent] = useState({});
+
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const data = await getStudentById(id);
+        setStudent(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (id) {
+      fetchStudent();
+    }
+  }, [id]);
+
   return (
     <div className="card">
       <div className="card-header">
-        <h2>{student.name}</h2>
+        <h2>{student.name || "Student Details"}</h2>
         <div className="flex gap-sm">
-          <Link to={`/reports/student/${student._id}`} className="btn btn-secondary">View Report</Link>
           <Link to={`/students/${student._id}/edit`} className="btn btn-outline">Edit</Link>
           <button onClick={() => navigate(-1)} className="btn btn-outline">Back</button>
         </div>
@@ -24,25 +36,23 @@ export default function ViewStudent() {
       <div className="student-details mb-lg">
         <div className="detail-row">
           <span className="detail-label">Email: </span>
-          <span>{student.email}</span>
+          <span>{student.email || "N/A"}</span>
         </div>
         <div className="detail-row">
           <span className="detail-label">Phone: </span>
-          <span>{student.phone}</span>
+          <span>{student.phone || "N/A"}</span>
         </div>
         <div className="detail-row">
           <span className="detail-label">Status: </span>
-          <span className="badge badge-success">{student.status}</span>
+          <span className={`badge ${student.status === "active" ? "badge-success" : student.status === "inactive" ? "badge-warning" : "badge-secondary"}`}>
+            {student.status || "N/A"}
+          </span>
         </div>
         <div className="detail-row">
           <span className="detail-label">Enrolled: </span>
-          <span>{new Date(student.enrolledDate).toLocaleDateString()}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Attendance Rate: </span>
-          <span>87% (23 records)</span>
+          <span>{student.enrolledDate ? new Date(student.enrolledDate).toLocaleDateString() : "N/A"}</span>
         </div>
       </div>
     </div>
-  )
+  );
 }

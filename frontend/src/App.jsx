@@ -12,13 +12,7 @@ import ViewStudent from './pages/Student/ViewStudent';
 import EditCourse from './pages/Courses/EditCourse';
 import ViewCourse from './pages/Courses/ViewCourse';
 import EnrollStudents from './pages/Courses/EnrollStudent';
-import MarkAttendance from './pages/Attendance/MarkAttendance';
-import RecentAbsences from './pages/Report/AbsencesReport';
-import Attendance from './pages/Attendance/Attendance';
-import AttendanceHistory from './pages/Attendance/AttendanceHistory';
 import Login from './pages/Auth/Login';
-import StudentReport from './pages/Report/StudentReport';
-import CourseReport from './pages/Report/CourseReport';
 import { logout } from './services/AuthService';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -30,18 +24,12 @@ function getPageTitle(pathname) {
     { pattern: /^\/students$/, title: 'All Students' },
     { pattern: /^\/students\/create$/, title: 'Add Student' },
     { pattern: /^\/courses$/, title: 'All Courses' },
-    { pattern: /^\/reports\/attendance$/, title: 'Attendance' },
-    { pattern: /^\/attendance-mark\/[^/]+$/, title: 'Mark Attendance' },
-    { pattern: /^\/attendance-history\/[^/]+$/, title: 'Attendance History' },
-    { pattern: /^\/recent-absences$/, title: 'Recent Absences' },
     { pattern: /^\/courses\/create$/, title: 'Add Course' },
     { pattern: /^\/students\/[^/]+$/, title: 'View Student' },
     { pattern: /^\/students\/[^/]+\/edit$/, title: 'Edit Student' },
     { pattern: /^\/courses\/[^/]+$/, title: 'View Course' },
     { pattern: /^\/courses\/[^/]+\/edit$/, title: 'Edit Course' },
     { pattern: /^\/courses\/[^/]+\/enroll$/, title: 'Enroll Students' },
-    { pattern: /^\/reports\/course\/[^/]+$/, title: 'Course Attendance Report' },
-    { pattern: /^\/reports\/student\/[^/]+$/, title: 'Student Attendance Report' },
   ];
 
   return titleMap.find((route) => route.pattern.test(pathname))?.title ?? 'Not Found Page';
@@ -68,7 +56,7 @@ function App() {
     navigate("/auth/login");
   };
 
-  console.log(currentUser)
+  // console.log(currentUser)
 
   return (
     <>
@@ -90,18 +78,12 @@ function App() {
               <Route path="/students" element={<ProtectedRoute><StudentsList /></ProtectedRoute>} />
               <Route path="/students/create" element={<ProtectedRoute><AddStudent /></ProtectedRoute>} />
               <Route path="/courses" element={<ProtectedRoute><AllCourses /></ProtectedRoute>} />
-              <Route path="/attendance-mark/:id" element={<ProtectedRoute><MarkAttendance /></ProtectedRoute>} />
-              <Route path="/recent-absences" element={<ProtectedRoute><RecentAbsences /></ProtectedRoute>} />
               <Route path="/courses/create" element={<ProtectedRoute><AddCourse /></ProtectedRoute>} />
               <Route path="/students/:id" element={<ProtectedRoute><ViewStudent /></ProtectedRoute>} />
               <Route path="/students/:id/edit" element={<ProtectedRoute><EditStudent /></ProtectedRoute>} />
               <Route path="/courses/:id" element={<ProtectedRoute><ViewCourse /></ProtectedRoute>} />
               <Route path="/courses/:id/edit" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
               <Route path="/courses/:id/enroll" element={<ProtectedRoute><EnrollStudents /></ProtectedRoute>} />
-              <Route path="/reports/attendance" element={<ProtectedRoute><Attendance /></ProtectedRoute>} />
-              <Route path="/attendance-history/:id" element={<ProtectedRoute><AttendanceHistory /></ProtectedRoute>} />
-              <Route path="/reports/student/:id" element={<ProtectedRoute><StudentReport /></ProtectedRoute>} />
-              <Route path="/reports/course/:id" element={<ProtectedRoute><CourseReport /></ProtectedRoute>} />
               <Route path="*" element={<ProtectedRoute><h1>404 - Page Not Found</h1></ProtectedRoute>} />
             </Routes>
           </div>

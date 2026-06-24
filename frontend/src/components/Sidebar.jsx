@@ -30,17 +30,9 @@ export default function Sidebar() {
           <span className="nav-icon">📚</span>
           All Courses
         </Link>
-
-        <div className="nav-section">Attendance</div>
-        <Link to="/reports/attendance" className="nav-item">
-          <span className="nav-icon">✅</span>
-          Mark Attendance
-        </Link>
-
-        <div className="nav-section">Reports</div>
-        <Link to="/recent-absences" className="nav-item">
-          <span className="nav-icon">📋</span>
-          Absences
+        <Link to="/courses/create" className="nav-item">
+          <span className="nav-icon">➕</span>
+          Add Course
         </Link>
       </nav>
     </aside>

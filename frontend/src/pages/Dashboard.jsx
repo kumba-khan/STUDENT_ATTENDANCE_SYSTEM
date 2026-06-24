@@ -65,10 +65,8 @@ export default function Dashboard() {
                         <h3>Quick Actions</h3>
                     </div>
                     <div className="quick-actions">
-                        <Link to="/reports/attendance" className="btn btn-primary">Mark Attendance</Link>
                         <Link to="/students/create" className="btn btn-secondary">Add Student</Link>
                         <Link to="/courses" className="btn btn-secondary">View Courses</Link>
-                        <Link to="/recent-absences" className="btn btn-outline">View Absences</Link>
                     </div>
                 </div>
             </div>
