@@ -17,14 +17,19 @@ import { logout } from './services/AuthService';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import { user } from "./services/AuthService";
+import EnrolledCourses from './pages/Courses/EnrolledCourses';
+import StudentProfile from './pages/Profile';
+import { useState } from 'react';
 
 function getPageTitle(pathname) {
   const titleMap = [
     { pattern: /^\/$/, title: 'Dashboard' },
     { pattern: /^\/students$/, title: 'All Students' },
     { pattern: /^\/students\/create$/, title: 'Add Student' },
+    { pattern: /^\/students\/profile$/, title: 'Student Profile' },
     { pattern: /^\/courses$/, title: 'All Courses' },
     { pattern: /^\/courses\/create$/, title: 'Add Course' },
+    { pattern: /^\/courses\/enrolled$/, title: 'Enrolled Courses' },
     { pattern: /^\/students\/[^/]+$/, title: 'View Student' },
     { pattern: /^\/students\/[^/]+\/edit$/, title: 'Edit Student' },
     { pattern: /^\/courses\/[^/]+$/, title: 'View Course' },
@@ -38,7 +43,8 @@ function getPageTitle(pathname) {
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const currentUser = user();
+  // const currentUser = user();
+  const [currentUser, setCurrentUser] = useState(()=>user())
 
   // Pages that should not use the dashboard layout
   const authPages = ["/auth/login"];
@@ -74,16 +80,18 @@ function App() {
           </header>
           <div className="content">
             <Routes>
-              <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/" element={<ProtectedRoute><Dashboard role={currentUser?.role}/></ProtectedRoute>} />
               <Route path="/students" element={<ProtectedRoute><StudentsList /></ProtectedRoute>} />
               <Route path="/students/create" element={<ProtectedRoute><AddStudent /></ProtectedRoute>} />
-              <Route path="/courses" element={<ProtectedRoute><AllCourses /></ProtectedRoute>} />
+              <Route path="/courses" element={<ProtectedRoute><AllCourses studentId={currentUser?.userId || currentUser?._id} role={currentUser?.role} /></ProtectedRoute>} />
               <Route path="/courses/create" element={<ProtectedRoute><AddCourse /></ProtectedRoute>} />
               <Route path="/students/:id" element={<ProtectedRoute><ViewStudent /></ProtectedRoute>} />
               <Route path="/students/:id/edit" element={<ProtectedRoute><EditStudent /></ProtectedRoute>} />
-              <Route path="/courses/:id" element={<ProtectedRoute><ViewCourse /></ProtectedRoute>} />
+              <Route path="/courses/:id" element={<ProtectedRoute><ViewCourse  role={currentUser?.role}/></ProtectedRoute>} />
               <Route path="/courses/:id/edit" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
               <Route path="/courses/:id/enroll" element={<ProtectedRoute><EnrollStudents /></ProtectedRoute>} />
+              <Route path="/courses/enrolled" element={<ProtectedRoute><EnrolledCourses studentId={currentUser?.userId || currentUser?._id} /></ProtectedRoute>} />
+              <Route path="/students/profile" element={<ProtectedRoute><StudentProfile studentId={currentUser?.userId || currentUser?._id} /></ProtectedRoute>} />
               <Route path="*" element={<ProtectedRoute><h1>404 - Page Not Found</h1></ProtectedRoute>} />
             </Routes>
           </div>

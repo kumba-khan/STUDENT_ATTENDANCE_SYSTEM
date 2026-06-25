@@ -89,6 +89,7 @@ export default function AddStudent() {
                 id="password"
                 name="password"
                 onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
                 value={password}
                 required
                 placeholder="Enter your password"

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getCoursesStats } from "../services/CourseService";
 import { Helmet } from 'react-helmet-async';
 
-export default function Dashboard() {
+export default function Dashboard({role}) {
     const [studentStats, setStudentStats] = useState(null);
     const [courseStats, setCourseStats] = useState(null);
 
@@ -71,8 +71,9 @@ export default function Dashboard() {
                         <h3>Quick Actions</h3>
                     </div>
                     <div className="quick-actions">
-                        <Link to="/students/create" className="btn btn-secondary">Add Student</Link>
+                        {role === "admin" && <Link to="/students/create" className="btn btn-secondary">Add Student</Link>}
                         <Link to="/courses" className="btn btn-secondary">View Courses</Link>
+                        {role === "student" && <Link to="/courses/enrolled" className="btn btn-secondary">Views enrolled Coures</Link>}
                     </div>
                 </div>
             </div>

@@ -33,13 +33,13 @@ export const authorize= (role) => {
 };
 
 export const authorizeAdminAndParticularStudent= (req, res, next) => {
-    const userId=req.params.id;
+    const userId = req.params?.studentId || req.body?.studentId || req.params?.id;
 
     if(!req.user){
         return res.status(401).json({ message: 'user not logged in' });
     }
 
-    if (req.user.role==="student" && (req.user.userId !== userId)) {
+    if (req.user.role === "student" && String(req.user.userId) !== String(userId)) {
         return res.status(403).json({ message: 'forbidden access' });
     }
 
@@ -48,12 +48,13 @@ export const authorizeAdminAndParticularStudent= (req, res, next) => {
 
 export const authorizeParticularUser= (req, res, next) => {
     const userId=req.params.id;
+    const tokenUserId = req.user?.userId || req.user?._id;
 
     if(!req.user){
         return res.status(401).json({ message: 'user not logged in' });
     }
 
-    if (req.user.userId !== userId) {
+    if (String(tokenUserId) !== String(userId)) {
         return res.status(403).json({ message: 'forbidden access' });
     }
 

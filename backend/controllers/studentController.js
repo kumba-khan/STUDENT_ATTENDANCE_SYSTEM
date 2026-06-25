@@ -60,6 +60,11 @@ export const getStudentById = async (req, res) => {
 export const updateStudent = async (req, res) => {
   try {
     const userData = req.body;
+
+    if(userData.password){
+      return res.status(400).json({ message: "You cannot update student's password" });
+    }
+
     const student = await User.findOne({
       _id: req.params.id,
       role: "student"
@@ -127,4 +132,97 @@ export const studentStatistic = async (req, res) => {
   }
 }
 
-//updatePassword
+export const getEnrolledCourses = async (req, res) => {
+  try {
+    const student = await User.findOne({_id: req.params.id,role: "student"});
+
+    if (!student) {
+      return res.status(404).json({
+        message: "Student not found"
+      });
+    }
+
+    const courses = await Course.find({
+      students: req.params.id
+    })
+      .lean()
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(courses);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching enrolled courses",
+      error: error.message
+    });
+  }
+};
+
+export const getUnEnrolledCourses = async (req, res) => {
+  try {
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "student"
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        message: "Student not found"
+      });
+    }
+
+    const courses = await Course.find({
+      students: {
+        $ne: req.params.id
+      }
+    })
+      .lean()
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(courses);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching unenrolled courses",
+      error: error.message
+    });
+  }
+};
+
+export const updateStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    // validate input
+    const allowedStatuses = ["active", "inactive"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status value"
+      });
+    }
+
+    // find student
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "student"
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        message: "Student not found"
+      });
+    }
+
+    // update status
+    student.status = status;
+    await student.save();
+
+    res.status(200).json({
+      message: "Status updated successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Error updating status", error: error.message });
+  }
+};

@@ -113,3 +113,56 @@ export const deleteStudent = async (id) => {
 
     return data;
 };
+
+export const updateStudentStatus = async (id, status) => {
+    const response = await fetch(`${API_URL}/${id}/status`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            ...authHeader(),
+        },
+        body: JSON.stringify({ status }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+    }
+
+    return data;
+};
+
+export const getEnrolledCourses = async (id) => {
+    const response = await fetch(
+        `${API_URL}/enrolled/${id}`,
+        {
+            headers: authHeader(),
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+    }
+
+    return data;
+};
+
+export const getUnEnrolledCourses = async (id) => {
+    const response = await fetch(
+        `${API_URL}/unenrolled/${id}`,
+        {
+            headers: authHeader(),
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+    }
+
+    return data;
+};
